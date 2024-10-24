@@ -1,4 +1,4 @@
-**Team Members:**
+**Team Members:** <br/>
 arav-sharma: Arav Sharma <br/>
 MarkM2008: Mark Martirosyan <br/>
 RonShk: Ron Shaked  
