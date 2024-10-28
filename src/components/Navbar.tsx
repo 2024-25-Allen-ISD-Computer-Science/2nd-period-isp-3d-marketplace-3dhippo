@@ -22,11 +22,11 @@ const Navbar = () => {
                   <Icons.logo className="h-10 w-10" />
                 </Link>
                 <div className="hidden md:flex space-x-4">
+                <Link href="/home">
+                    <Button variant="ghost">Home</Button>
+                  </Link>
                   <Link href="/marketplace">
                     <Button variant="ghost">Marketplace</Button>
-                  </Link>
-                  <Link href="/about">
-                    <Button variant="ghost">About</Button>
                   </Link>
                 </div>
               </div>
