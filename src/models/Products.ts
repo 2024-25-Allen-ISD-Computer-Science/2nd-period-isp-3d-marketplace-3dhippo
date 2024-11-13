@@ -1,8 +1,9 @@
-// src/models/Product.ts
+// src/models/Products.ts
 
 import mongoose, { Document, Model, Schema } from 'mongoose';
 
 interface IProduct extends Document {
+  _id: string; // Set _id to string
   name: string;
   description: string;
   price: number;
@@ -20,7 +21,7 @@ const productSchema: Schema<IProduct> = new mongoose.Schema({
   subcategory: { type: String, required: true },
   displayPicture: { type: String, required: true },
   pictures: { type: [String], required: true },
-}, { collection: 'Products' }); // Use the collection name 'Products'
+});
 
 const Product: Model<IProduct> = mongoose.models.Product || mongoose.model<IProduct>('Product', productSchema);
 

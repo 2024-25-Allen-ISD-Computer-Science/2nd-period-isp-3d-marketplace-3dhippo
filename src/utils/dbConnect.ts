@@ -1,21 +1,26 @@
-// src/utils/dbConnect.ts
+import { MongoClient } from "mongodb";
 
-import mongoose from 'mongoose';
+// Define the URI and database name
+const uri = "mongodb://localhost:27017/3dhippo";
 
-const MONGODB_URI = 'mongodb://localhost:27017/3dhippo'; // Specify the database name '3dhippo'
+// Define a variable to store the MongoClient instance
+let client: MongoClient | null = null;
 
-const dbConnect = async () => {
-  if (mongoose.connection.readyState >= 1) {
-    return;
+// Function to get the MongoClient instance
+export async function getDbClient(): Promise<MongoClient> {
+  if (!client) {
+    // Initialize the client if not already done
+    client = new MongoClient(uri);
+
+    try {
+      // Connect to MongoDB
+      await client.connect();
+      console.log("Connected to MongoDB");
+    } catch (error) {
+      console.error("Error connecting to MongoDB:", error);
+      throw error;
+    }
   }
-
-  mongoose.set('strictQuery', false); // Optional: To suppress deprecation warnings
-  try {
-    await mongoose.connect(MONGODB_URI, {});
-    console.log('Connected to MongoDB');
-  } catch (error) {
-    console.error('Error connecting to MongoDB', error);
-  }
-};
-
-export default dbConnect;
+  
+  return client;
+}

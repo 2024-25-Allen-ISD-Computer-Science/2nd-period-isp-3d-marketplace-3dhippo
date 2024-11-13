@@ -1,77 +1,110 @@
 "use client";
 
-import { useParams } from 'next/navigation'; // Import the useParams hook from Next.js to access dynamic route parameters
-import Image from 'next/image'; // Import the Image component for optimized image rendering
-import { useEffect, useState } from 'react'; // Import React hooks for state management and side effects
-import axios from 'axios'; // Import axios for making HTTP requests
-import { IProduct } from '../../../../models/Products'; // Import the IProduct interface for type safety
+import { useParams } from 'next/navigation';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { IProduct } from '../../../../models/Products';
+import AddToCartButton from '@/components/AddToCartButton';
+import { Check, Shield } from 'lucide-react';
+import Link from 'next/link';
+
+// Define the breadcrumb navigation structure
+const BREADCRUMBS = [
+  { id: 1, name: 'Home', href: '/' },
+  { id: 2, name: 'Products', href: '/products' },
+];
 
 const ProductDetailsPage = () => {
-  // Use useParams to get the 'id' parameter from the URL
   const { id } = useParams();
-  const productId = Array.isArray(id) ? id[0] : id; // Handle the case where 'id' could be an array
+  const productId = Array.isArray(id) ? id[0] : id;
 
-  // Define state variables for the product data, loading state, and error state
   const [product, setProduct] = useState<IProduct | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // useEffect hook to fetch product details when the component mounts or when productId changes
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        // Fetch product details from the API using axios
         const response = await axios.get(`/api/products/${productId}`);
-        setProduct(response.data.data); // Update state with fetched product data
+        setProduct(response.data.data);
       } catch (err) {
-        setError("Error fetching product details."); // Set error message if fetching fails
-        console.error(err); // Log the error for debugging
+        setError("Error fetching product details.");
+        console.error(err);
       } finally {
-        setLoading(false); // Set loading to false after fetching is complete, whether it succeeded or failed
+        setLoading(false);
       }
     };
 
-    fetchProduct(); // Call the function to fetch product details
-  }, [productId]); // Dependency array ensures this effect runs when productId changes
+    fetchProduct();
+  }, [productId]);
 
-  // Conditional rendering: Display loading message while fetching data
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+  if (!product) return <p>Product not found</p>;
 
-  // Conditional rendering: Display error message if there is an error
-  if (error) {
-    return <p>{error}</p>;
-  }
+  // Prepare image URLs for the main image and gallery
+  const mainImageUrl = product.displayPicture;
 
-  // Conditional rendering: Display 'Product not found' if no product is returned
-  if (!product) {
-    return <p>Product not found</p>;
-  }
-
-  // Render the product details
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
-      <div className="flex">
-        {/* Main product image */}
-        <div className="w-1/2">
-          <Image src={product.displayPicture} alt={product.name} width={500} height={500} />
-        </div>
-        {/* Product details section */}
-        <div className="w-1/2 pl-4">
-          <p className="mb-4">{product.description}</p>
-          <p className="text-xl font-bold mb-4">${product.price.toFixed(2)}</p>
-          {/* Add more product details as needed */}
-        </div>
-      </div>
-      {/* Render additional pictures of the product */}
-      <div className="mt-4 flex">
-        {product.pictures.map((pic, index) => (
-          <div key={index} className="w-1/4 p-2">
-            <Image src={pic} alt={`${product.name} ${index}`} width={500} height={500} />
+    <div className="bg-white p-6">
+      {/* Breadcrumb navigation */}
+      <nav className="text-sm text-gray-500 mb-4">
+        <ol className="flex space-x-2">
+          {BREADCRUMBS.map((breadcrumb, i) => (
+            <li key={breadcrumb.id}>
+              <Link href={breadcrumb.href} className="hover:text-gray-700">
+                {breadcrumb.name}
+              </Link>
+              {i !== BREADCRUMBS.length - 1 && (
+                <span className="mx-2">/</span>
+              )}
+            </li>
+          ))}
+          <li>{product.name}</li>
+        </ol>
+      </nav>
+
+      {/* Main content layout */}
+      <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
+        {/* Product Details on the left */}
+        <div className="lg:w-1/2">
+          <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
+          <p className="text-xl font-semibold text-gray-800 mb-4">
+            ${product.price.toFixed(2)}
+          </p>
+          <p className="text-gray-600 mb-6">{product.description}</p>
+
+          {/* Eligibility info */}
+          <div className="flex items-center mb-4">
+            <Check aria-hidden="true" className="h-5 w-5 text-green-500 mr-2" />
+            <p className="text-sm text-gray-500">Eligible for instant delivery</p>
           </div>
-        ))}
+
+          {/* Add to cart button */}
+          <AddToCartButton product={product} />
+
+          {/* Guarantee message */}
+          <div className="mt-6 text-center">
+            <div className="group inline-flex text-sm text-gray-500">
+              <Shield aria-hidden="true" className="mr-2 h-5 w-5 text-gray-400" />
+              <span>30 Day Return Guarantee</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Product Image on the right */}
+        <div className="lg:w-1/2 lg:flex lg:justify-end">
+          <div className="aspect-square rounded-lg shadow-lg overflow-hidden">
+            <Image
+              src={mainImageUrl}
+              alt={product.name}
+              width={600}
+              height={600}
+              className="object-cover"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
