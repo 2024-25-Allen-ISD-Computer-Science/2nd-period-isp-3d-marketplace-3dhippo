@@ -13,10 +13,20 @@ import { Separator } from "./ui/separator";
 import { useEffect, useState } from "react";
 import Image from "next/image"; // Import Next.js Image component
 import Link from "next/link";
+import { useCart } from "@/hooks/use-cart";
+import { ScrollArea } from "./ui/scroll-area";
+import CartItem from "./CartItem";
 
 const Cart = () => {
+  const { items } = useCart();
   const [isMounted, setIsMounted] = useState(false);
-  const itemCount = 0; // This will show 0 items to test the empty cart display
+  const itemCount = items.length;
+
+  // Calculate total price based on items in the cart
+  const cartTotal = items.reduce(
+    (total, { product }) => total + product.price,
+    0
+  );
 
   useEffect(() => {
     setIsMounted(true);
@@ -44,11 +54,21 @@ const Cart = () => {
           <>
             {/* This will show when items are present */}
             <div className="flex w-full flex-col pr-6 space-y-2">
+              <ScrollArea>
+                {items.map(({ product }) => (
+                  <CartItem
+                    product={product}
+                    key={product._id}
+                  />
+                ))}
+              </ScrollArea>
               <p className="text-md text-gray-600">Cart Items</p>
-              <div className="flex items-center justify-between">
-                <p>Sample Item</p>
-                <p>$100</p>
-              </div>
+              {items.map(({ product }) => (
+                <div className="flex items-center justify-between" key={product._id}>
+                  <p>{product.name}</p>
+                  <p>${product.price.toFixed(2)}</p>
+                </div>
+              ))}
             </div>
 
             <div className="space-y-4 pr-6 pt-4">
@@ -58,15 +78,11 @@ const Cart = () => {
               <div className="space-y-1.5 text-sm">
                 <div className="flex justify-between">
                   <span className="flex-1">Shipping</span>
-                  <span>Free</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="flex-1">Transaction Fee</span>
-                  <span>$1</span>
+                  <span>To be calculated at checkout</span>
                 </div>
                 <div className="flex justify-between font-semibold">
                   <span className="flex-1">Total</span>
-                  <span>$101</span>
+                  <span>${cartTotal.toFixed(2)}</span>
                 </div>
               </div>
             </div>

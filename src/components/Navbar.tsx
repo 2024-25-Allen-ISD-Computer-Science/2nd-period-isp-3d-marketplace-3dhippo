@@ -44,7 +44,6 @@ const Navbar = () => {
                   </Link>
                 </SignedOut>
                 <Separator orientation="vertical" className="h-6" />
-                {/* Use the Cart component here */}
                 <Cart />
               </div>
             </div>

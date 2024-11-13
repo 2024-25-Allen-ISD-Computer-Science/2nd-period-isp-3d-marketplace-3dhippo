@@ -1,18 +1,24 @@
 import { NextResponse } from 'next/server';
-import dbConnect from '@/utils/dbConnect';
-import Product from '@/models/Products';
+import { ObjectId } from 'mongodb';
+import { getDbClient } from '@/utils/dbConnect';
 
 // Define the GET request handler for fetching a single product by ID
 export async function GET(request: Request, { params }: { params: { id: string } }) {
-  // Connect to the database
-  await dbConnect();
+  const client = await getDbClient();
+  const db = client.db("3dhippo");
+  const collection = db.collection("Products");
 
   try {
     // Extract the product ID from the request parameters
     const { id } = params;
 
+    // Ensure the ID is a valid MongoDB ObjectId
+    if (!ObjectId.isValid(id)) {
+      return NextResponse.json({ success: false, message: 'Invalid product ID' }, { status: 400 });
+    }
+
     // Find the product by ID in the database
-    const product = await Product.findById(id);
+    const product = await collection.findOne({ _id: new ObjectId(id) });
 
     // If the product is not found, return a 404 response
     if (!product) {
