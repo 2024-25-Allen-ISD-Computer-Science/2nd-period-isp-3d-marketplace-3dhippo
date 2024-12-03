@@ -32,7 +32,7 @@ const AddToCartButton = ({
         setIsSuccess(true) // Set success state to true
       }}
       size='lg'
-      className='w-full'>
+      className='w-3/4'>
       {isSuccess ? 'Added!' : 'Add to cart'}
     </Button>
   )

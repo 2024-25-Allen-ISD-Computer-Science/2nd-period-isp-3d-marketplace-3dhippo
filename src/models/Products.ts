@@ -11,6 +11,7 @@ interface IProduct extends Document {
   subcategory: string;
   displayPicture: string;
   pictures: string[];
+  STLfile?: string;
 }
 
 const productSchema: Schema<IProduct> = new mongoose.Schema({
