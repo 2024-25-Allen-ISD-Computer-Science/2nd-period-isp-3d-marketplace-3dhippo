@@ -6,10 +6,10 @@ type ProductCardProps = {
   name: string;
   description: string;
   price: number;
-  discountPrice?: number; // Optional discount price
+  discountPrice?: number; 
   displayPicture: string;
   pictures: string[];
-  brand?: string; // Optional brand field
+  brand?: string; 
 };
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -18,7 +18,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   price,
   discountPrice,
   displayPicture,
-  brand = "Brand", // Default to "Brand" if brand is not provided
+  brand = "Brand", // default to brand to "Brand" if brand is not provided in DB
 }) => {
   return (
     <div className="w-56 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl">
@@ -31,18 +31,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
           />
           <div className="px-3 py-2 w-56">
             <span className="text-gray-400 mr-2 uppercase text-xs">{brand}</span>
-            <p className="text-md font-bold text-black truncate block capitalize">
+            <p className="text-md font-bold text-black truncate block capitalize"> {/* Product Name */}
               {name}
             </p>
-            <div className="flex items-center">
-              <p className="text-md font-semibold text-black my-2">${price}</p>
+            <div className="flex items-center"> 
+              <p className="text-md font-semibold text-black my-2">${price}</p>  {/* Product Price */}
               {discountPrice && (
                 <del>
-                  <p className="text-xs text-gray-600 ml-2">${discountPrice}</p>
+                  <p className="text-xs text-gray-600 ml-2">${discountPrice}</p>  {/* Discounted Price if applicable */}
                 </del>
               )}
-              <div className="ml-auto">
-                <svg
+              <div className="ml-auto"> {/* Add to cart icon */}
+                <svg 
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
                   height="16"
@@ -50,7 +50,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   className="bi bi-bag-plus"
                   viewBox="0 0 16 16"
                 >
-                  <path
+                  <path 
                     fillRule="evenodd"
                     d="M8 7.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0v-1.5H6a.5.5 0 0 1 0-1h1.5V8a.5.5 0 0 1 .5-.5z"
                   />
