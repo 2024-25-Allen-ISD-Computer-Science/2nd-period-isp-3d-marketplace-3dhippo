@@ -1,27 +1,58 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import axios from "axios";
 import CategorySidebar from "@/components/CategorySidebar";
-import Link from "next/link";
+import ProductCard from "@/components/ProductCard";
+import { IProduct } from "@/models/Products";
 
 const Marketplace = () => {
+  const [products, setProducts] = useState<IProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get("/api/products");
+        setProducts(response.data.data); // Store all products
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
   return (
     <div className="marketplace flex">
       <CategorySidebar />
-      <div className="marketplace-content flex-1 p-6 flex flex-col items-center justify-center">
-      {/* Empty Cart Image */}
-      <img  
-          src="/hippo-empty-cart.png"
-          alt="Empty Marketplace"
-          className="w-64 h-64 mb-6"
-        /> 
-        {/* Header & Description */}
-        <h1 className="text-3xl font-bold mb-4 text-center">No Category Selected</h1>
-        <p className="text-lg text-gray-600 text-center mb-6">
-          Get started by selecting a category on the left side!
+      <div className="marketplace-content flex-1 p-6">
+        <h1 className="text-3xl font-bold mb-4 mt-5 text-center">Welcome to the Marketplace!</h1>
+        <p className="text-lg text-gray-600 text-center mb-10">
+          Browse through our marketplace or select a category to filter products.
         </p>
-        {/* Redirect back to home button */}
-        <Link
-          href="/home"
-          className="px-6 py-3 bg-blue-500 text-white rounded hover:bg-blue-600"> Return to Home
-        </Link>
+
+        {loading ? (
+          <p className="text-center text-gray-600">Loading products...</p>
+        ) : products.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-y-6">
+            {products.map((product) => (
+              <ProductCard
+                key={product._id as string}
+                id={product._id as string}
+                name={product.name}
+                description={product.description}
+                price={product.price}
+                displayPicture={product.displayPicture}
+                pictures={product.pictures}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-gray-600">No products available.</p>
+        )}
       </div>
     </div>
   );
