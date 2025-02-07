@@ -20,7 +20,11 @@ export default function Home() {
             <Link href="/marketplace" className={buttonVariants()}>
               Browse Trending
             </Link>
-            <Button variant="ghost">Our Quality Promise &rarr;</Button>
+            <Button variant="ghost">
+              <Link href="/home" >
+                Return to Home &rarr;
+              </Link>
+              </Button>
           </div>
         </div>
       </MaxWidthWrapper>
