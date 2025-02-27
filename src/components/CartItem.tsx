@@ -1,66 +1,49 @@
-import { useCart } from '@/hooks/use-cart';
-import { formatPrice } from '@/lib/utils';
-import { IProduct } from '@/types/product';
-import { ImageIcon, X } from 'lucide-react';
-import Image from 'next/image';
+import { useCart } from "@/hooks/use-cart";
+import { IProduct } from "@/types/product";
+import { X, ImageIcon } from "lucide-react";
+import Image from "next/image";
 
 const CartItem = ({ product }: { product: IProduct }) => {
-  // Ensure we use the first picture if available, otherwise use a placeholder or fallback
-  const image = product.pictures && product.pictures.length > 0 ? product.pictures[0] : null;
-
   const { removeItem } = useCart();
+  const image = "/product-picture-display/car.jpg";
+  const label = product.category.charAt(0).toUpperCase() + product.category.slice(1);
 
-  // Label might come from a different source, adapt if needed
-  const label = product.category.charAt(0).toUpperCase() + product.category.slice(1); 
-
-  return (
-    <div className="space-y-3 py-2">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-center space-x-4">
-          <div className="relative aspect-square h-16 w-16 min-w-fit overflow-hidden rounded">
-            {image ? (
-              <Image
-                src={image}
-                alt={product.name}
-                fill
-                className="absolute object-cover"
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center bg-secondary">
-                <ImageIcon
-                  aria-hidden="true"
-                  className="h-4 w-4 text-muted-foreground"
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="flex flex-col self-start">
-            <span className="line-clamp-1 text-sm font-medium mb-1">
-              {product.name}
-            </span>
-
-            <span className="line-clamp-1 text-xs capitalize text-muted-foreground">
-              {label}
-            </span>
-
-            <div className="mt-4 text-xs text-muted-foreground">
-              <button
-                onClick={() => removeItem(product._id)}
-                className="flex items-center gap-0.5">
-                <X className="w-3 h-4" />
-                Remove
-              </button>
+  return (  
+    <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg shadow-sm">
+      <div className="flex items-center gap-4">
+        {/* Product Image */}
+        <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-200">
+          {image ? (
+            <Image
+              src={image}
+              alt={product.name}
+              fill
+              className="object-cover"
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full w-full text-gray-500">
+              <ImageIcon className="h-5 w-5" />
             </div>
-          </div>
+          )}
         </div>
 
-        <div className="flex flex-col space-y-1 font-medium">
-          <span className="ml-auto line-clamp-1 text-sm">
-            {product.price}
+        {/* Product Details */}
+        <div className="flex flex-col space-y-1">
+          <span className="text-sm font-semibold text-gray-900 line-clamp-1">
+            {product.name}
           </span>
+          <span className="text-xs text-gray-500 capitalize">{label}</span>
+          <span className="text-sm font-medium text-gray-900">${product.price.toFixed(2)}</span>
         </div>
       </div>
+
+      {/* Remove Button */}
+      <button
+        onClick={() => removeItem(product._id)}
+        className="text-gray-500 hover:text-red-600 transition-all duration-200"
+      >
+        <X className="w-4 h-4" />
+      </button>
     </div>
   );
 };
