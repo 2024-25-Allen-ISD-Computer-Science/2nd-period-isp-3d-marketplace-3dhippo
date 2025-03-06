@@ -1,30 +1,70 @@
-// src/models/Products.ts
+import { createClient } from '@supabase/supabase-js';
+const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
 
-import mongoose, { Document, Model, Schema } from 'mongoose';
-
-interface IProduct extends Document {
-  _id: string; // Set _id to string
+export interface IProduct {
+  id?: string;
   name: string;
   description: string;
   price: number;
   category: string;
   subcategory: string;
-  displayPicture: string;
+  display_picture: string;
   pictures: string[];
-  STLfile?: string;
+  stl_file?: string;
+  created_at?: string;
 }
 
-const productSchema: Schema<IProduct> = new mongoose.Schema({
-  name: { type: String, required: true },
-  description: { type: String, required: true },
-  price: { type: Number, required: true },
-  category: { type: String, required: true },
-  subcategory: { type: String, required: true },
-  displayPicture: { type: String, required: true },
-  pictures: { type: [String], required: true },
-});
+// Supabase table name
+export const PRODUCTS_TABLE = 'products';
 
-const Product: Model<IProduct> = mongoose.models.Product || mongoose.model<IProduct>('Product', productSchema);
+// Helper functions for Supabase operations
+export const getProducts = async () => {
+  const { data, error } = await supabase
+    .from(PRODUCTS_TABLE)
+    .select('*');
+  
+  if (error) throw error;
+  return data;
+};
 
-export default Product;
-export type { IProduct };
+export const getProductById = async (id: string) => {
+  const { data, error } = await supabase
+    .from(PRODUCTS_TABLE)
+    .select('*')
+    .eq('id', id)
+    .single();
+  
+  if (error) throw error;
+  return data;
+};
+
+export const createProduct = async (product: IProduct) => {
+  const { data, error } = await supabase
+    .from(PRODUCTS_TABLE)
+    .insert([product])
+    .select();
+  
+  if (error) throw error;
+  return data?.[0];
+};
+
+export const updateProduct = async (id: string, updates: Partial<IProduct>) => {
+  const { data, error } = await supabase
+    .from(PRODUCTS_TABLE)
+    .update(updates)
+    .eq('id', id)
+    .select();
+  
+  if (error) throw error;
+  return data?.[0];
+};
+
+export const deleteProduct = async (id: string) => {
+  const { error } = await supabase
+    .from(PRODUCTS_TABLE)
+    .delete()
+    .eq('id', id);
+  
+  if (error) throw error;
+  return true;
+};

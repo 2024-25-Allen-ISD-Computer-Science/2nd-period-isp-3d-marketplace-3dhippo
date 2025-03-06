@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { supabase } from '@/utils/supabaseClient';
 
 type ProductCardProps = {
   id: string;
@@ -66,3 +67,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
 };
 
 export default ProductCard;
+
+// Update any MongoDB specific code to use Supabase
+const fetchProduct = async (id: string) => {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('id', id)
+    .single();
+  
+  if (error) throw error;
+  return data;
+};
