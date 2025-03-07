@@ -44,21 +44,24 @@ const ProductReel: React.FC = () => {
   ];
 
   return (
-    <div className="ml-16 mt-16 px-6">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">Discover More</h2>
-      <div className="flex space-x-6 overscroll-none">
-        {placeholderProducts.map((product) => (
-          <ProductCard
-            key={product.id}
-            id={product.id}
-            name={product.name}
-            description={product.description} 
-            price={product.price}
-            displayPicture={product.displayPicture}
-            pictures={product.pictures}
-            brand={product.brand}
-          />
-        ))}
+    <div className="px-6 py-10">
+      <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Discover More</h2>
+      <div className="relative">
+        <div className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-hide px-2 py-4">
+          {placeholderProducts.map((product) => (
+            <div key={product.id} className="flex-shrink-0 w-64">
+              <ProductCard
+                id={product.id}
+                name={product.name}
+                description={product.description}
+                price={product.price}
+                displayPicture={product.displayPicture}
+                pictures={product.pictures}
+                brand={product.brand}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
